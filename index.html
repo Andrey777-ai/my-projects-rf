@@ -1,0 +1,660 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои проекты РФ — портфолио разработок</title>
+    <meta name="description" content="Портфолио инженерных, научных и технологических проектов Андрея Чупрова">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',Roboto,system-ui,sans-serif;background:#0d1117;color:#e6edf3;line-height:1.7;min-height:100vh}
+
+
+        /* Шапка */
+        .hero{background:linear-gradient(135deg,#1a2332 0%,#0d1a2e 50%,#0d1117 100%);padding:60px 20px 40px;text-align:center;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 30% 50%,rgba(88,166,255,0.15) 0%,transparent 50%);pointer-events:none}
+        .hero-content{position:relative;z-index:1;max-width:1200px;margin:0 auto}
+        .hero h1{font-size:3rem;font-weight:700;background:linear-gradient(90deg,#58a6ff,#7ee787,#58a6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px;letter-spacing:-1px}
+        .hero .subtitle{font-size:1.15rem;color:#8b949e;margin-bottom:24px}
+        .hero .stats{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin-top:20px}
+        .stat{text-align:center}
+        .stat-value{font-size:2rem;font-weight:700;color:#58a6ff;display:block}
+        .stat-label{font-size:.8rem;color:#8b949e;text-transform:uppercase;letter-spacing:1px}
+
+
+        /* Основной контейнер */
+        .container{max-width:1300px;margin:0 auto;padding:30px 20px}
+
+
+        /* Панель управления */
+        .controls{background:#161b22;border:1px solid #30363d;border-radius:16px;padding:20px 24px;margin-bottom:28px;display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+        .search-box{flex:1;min-width:250px;position:relative}
+        .search-box input{width:100%;padding:12px 18px 12px 44px;background:#0d1117;border:1px solid #30363d;border-radius:10px;color:#e6edf3;font-size:.95rem;font-family:inherit;transition:0.2s}
+        .search-box input:focus{outline:none;border-color:#58a6ff;box-shadow:0 0 0 3px rgba(88,166,255,0.15)}
+        .search-box::before{content:'🔍';position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:1rem;opacity:0.6}
+        .categories{display:flex;gap:8px;flex-wrap:wrap;flex:1;justify-content:flex-end}
+        .cat-btn{padding:8px 14px;background:#21262d;border:1px solid #30363d;border-radius:20px;color:#8b949e;cursor:pointer;font-size:.8rem;font-family:inherit;transition:0.2s;white-space:nowrap}
+        .cat-btn:hover{background:#30363d;color:#e6edf3}
+        .cat-btn.active{background:#58a6ff;color:#0d1117;border-color:#58a6ff;font-weight:600}
+
+
+        /* Сетка проектов */
+        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+        .card{background:#161b22;border:1px solid #30363d;border-radius:16px;padding:22px;transition:0.25s;display:flex;flex-direction:column;position:relative;overflow:hidden}
+        .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent,#58a6ff),transparent);opacity:0;transition:0.25s}
+        .card:hover{transform:translateY(-4px);border-color:#58a6ff;box-shadow:0 10px 30px rgba(88,166,255,0.15)}
+        .card:hover::before{opacity:1}
+        .card-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
+        .card-icon{font-size:2.2rem;line-height:1;flex-shrink:0}
+        .card-title{font-size:1.05rem;font-weight:600;color:#e6edf3;line-height:1.3}
+        .card-desc{font-size:.88rem;color:#8b949e;margin-bottom:14px;flex:1}
+        .card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+        .tag{font-size:.7rem;padding:3px 10px;background:#21262d;color:#8b949e;border-radius:12px;border:1px solid #30363d}
+        .card-link{display:inline-flex;align-items:center;gap:6px;color:#58a6ff;text-decoration:none;font-size:.85rem;font-weight:500;margin-top:auto;transition:0.2s}
+        .card-link:hover{color:#7ee787;gap:10px}
+        .card-link.no-link{color:#6e7681;cursor:default}
+
+
+        /* Пусто */
+        .empty{text-align:center;padding:60px 20px;color:#8b949e}
+        .empty-icon{font-size:3rem;margin-bottom:16px}
+
+
+        /* Футер */
+        .footer{margin-top:60px;padding:30px 20px;border-top:1px solid #30363d;text-align:center;color:#8b949e;font-size:.9rem}
+        .footer a{color:#58a6ff;text-decoration:none;margin:0 10px}
+        .footer a:hover{color:#7ee787}
+        .footer-line{margin-bottom:12px}
+
+
+        /* Адаптив */
+        @media(max-width:700px){
+            .hero h1{font-size:2rem}
+            .hero{padding:40px 16px 30px}
+            .controls{padding:16px}
+            .categories{justify-content:flex-start}
+            .grid{grid-template-columns:1fr}
+            .container{padding:20px 14px}
+        }
+
+
+        /* Анимация появления */
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .card{animation:fadeIn 0.4s ease-out backwards}
+    </style>
+</head>
+<body>
+
+
+<!-- ШАПКА -->
+<div class="hero">
+    <div class="hero-content">
+        <h1>Мои проекты РФ</h1>
+        <p class="subtitle">Портфолио инженерных, научных и технологических разработок · 2024–2026</p>
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-value" id="total-count">38</span>
+                <span class="stat-label">Проектов</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">12</span>
+                <span class="stat-label">Категорий</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">8</span>
+                <span class="stat-label">Модулей пайплайна</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- КОНТЕЙНЕР -->
+<div class="container">
+
+
+    <!-- ПАНЕЛЬ УПРАВЛЕНИЯ -->
+    <div class="controls">
+        <div class="search-box">
+            <input type="text" id="search" placeholder="Поиск по названию или описанию...">
+        </div>
+        <div class="categories" id="categories">
+            <button class="cat-btn active" data-cat="all">Все</button>
+            <button class="cat-btn" data-cat="meta">🌟 Мета</button>
+            <button class="cat-btn" data-cat="infrastructure">🏗️ Инфраструктура</button>
+            <button class="cat-btn" data-cat="energy">⚡ Энергетика</button>
+            <button class="cat-btn" data-cat="transport">🚀 Транспорт</button>
+            <button class="cat-btn" data-cat="agriculture">🌾 АПК</button>
+            <button class="cat-btn" data-cat="cities">🏙️ Города</button>
+            <button class="cat-btn" data-cat="education">🎓 Образование</button>
+            <button class="cat-btn" data-cat="finance">💰 Финансы</button>
+            <button class="cat-btn" data-cat="science">🔬 Наука</button>
+            <button class="cat-btn" data-cat="it-ai">🤖 ИТ и ИИ</button>
+            <button class="cat-btn" data-cat="ecology">🌍 Экология</button>
+            <button class="cat-btn" data-cat="security">🛡️ Безопасность</button>
+        </div>
+    </div>
+
+
+    <!-- СЕТКА ПРОЕКТОВ -->
+    <div class="grid" id="grid">
+
+
+        <!-- МЕТА -->
+        <div class="card" data-cat="meta" data-tags="системный контейнер фрактальная архитектура философия" style="--accent:#f0f6fc">
+            <div class="card-header">
+                <span class="card-icon">🌟</span>
+                <div class="card-title">Цифровой Скипетр России</div>
+            </div>
+            <p class="card-desc">Зонтичная система управления государством: НИКИЯ, Фин_Симфония, ПФР_2.0, ДВ_Гипер_Хаб, Clean Coal, ГОЭЛРО-2.0, судебный ИИ, инженерный переводчик и другие. Прогноз: +₵120 трлн к ВВП к 2040.</p>
+            <div class="card-tags"><span class="tag">мета-проект</span><span class="tag">управление</span><span class="tag">системный</span></div>
+            <a href="https://andrey777-ai.github.io/digital-scepter/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <!-- ИНФРАСТРУКТУРА -->
+        <div class="card" data-cat="infrastructure" data-tags="всм москва петербург магистраль цифровая платформа" style="--accent:#58a6ff">
+            <div class="card-header">
+                <span class="card-icon">🚄</span>
+                <div class="card-title">ВСМ Москва-Петербург</div>
+            </div>
+            <p class="card-desc">Фрактальная логистика, цифровые двойники и система управления жизненным циклом высокоскоростной магистрали. Сокращение времени согласования решений на 30%.</p>
+            <div class="card-tags"><span class="tag">ВСМ</span><span class="tag">магистраль</span><span class="tag">ProjectData</span></div>
+            <a href="https://andrey777-ai.github.io/vsm-platform/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="infrastructure" data-tags="авто-дороги железные реки квантовый интернет экономика каркас" style="--accent:#58a6ff">
+            <div class="card-header">
+                <span class="card-icon">🛣️</span>
+                <div class="card-title">Единый каркас экономики</div>
+            </div>
+            <p class="card-desc">Интеграция авто-дорог, железных дорог, речных путей и квантового интернета. 50 000+ км магистралей, 10 000+ км квантовой сети. Срок до 2050 года.</p>
+            <div class="card-tags"><span class="tag">инфраструктура</span><span class="tag">квантовый интернет</span><span class="tag">транспорт</span></div>
+            <a href="https://andrey777-ai.github.io/economy-framework/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="infrastructure" data-tags="земснаряд гиперболоид дноуглубление реки фракталы" style="--accent:#58a6ff">
+            <div class="card-header">
+                <span class="card-icon">🌊</span>
+                <div class="card-title">Гиперболоидный земснаряд</div>
+            </div>
+            <p class="card-desc">Размыв и углубление русел рек за счёт гиперболоидных конструкций. Производительность 10 848 м³/смену, CAPEX $2.3 млн, окупаемость 1.35 сезона.</p>
+            <div class="card-tags"><span class="tag">гидротехника</span><span class="tag">гиперболоид</span><span class="tag">CFD</span><span class="tag">8 модулей</span></div>
+            <a href="https://andrey777-ai.github.io/hyperboloid-dredger/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="infrastructure" data-tags="дв гипер хаб крио цод hyperloop биобанк дальний восток" style="--accent:#58a6ff">
+            <div class="card-header">
+                <span class="card-icon">🌏</span>
+                <div class="card-title">ДВ_Гипер_Хаб</div>
+            </div>
+            <p class="card-desc">Крио-ЦОДы, Hyperloop и биобанк на Дальнем Востоке. Вклад в ВВП ₵120 трлн, прирост населения +5 млн к 2040. Инвестиции ₽28 трлн.</p>
+            <div class="card-tags"><span class="tag">Дальний Восток</span><span class="tag">Hyperloop</span><span class="tag">крио-ЦОД</span></div>
+            <a href="https://andrey777-ai.github.io/dv-hyperhub/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <!-- ЭНЕРГЕТИКА -->
+        <div class="card" data-cat="energy" data-tags="атомная энергетика цифровой двойник нейро тренажёр логистика" style="--accent:#f5a623">
+            <div class="card-header">
+                <span class="card-icon">⚛️</span>
+                <div class="card-title">Атомная энергетика</div>
+            </div>
+            <p class="card-desc">Цифровой двойник реактора (точность 99.2%), нейро-тренажёр операторов (+47% усвоения), фрактальная логистика ядерных материалов (+41% безопасность).</p>
+            <div class="card-tags"><span class="tag">АЭС</span><span class="tag">нейро</span><span class="tag">безопасность</span></div>
+            <a href="https://andrey777-ai.github.io/atomic-energy/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="energy" data-tags="плазма синтез гамма 7 термояд турбулентность" style="--accent:#f5a623">
+            <div class="card-header">
+                <span class="card-icon">🔥</span>
+                <div class="card-title">Плазменный синтез (γ=7)</div>
+            </div>
+            <p class="card-desc">Управление плазмой: цикл γ=7, подавление турбулентности 93%, эффективность 87%, удержание 820 мс. Свето-акустическая решётка, квантовые затворы.</p>
+            <div class="card-tags"><span class="tag">термояд</span><span class="tag">плазма</span><span class="tag">γ=7</span></div>
+            <a href="https://andrey777-ai.github.io/plasma-fusion/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="energy" data-tags="гоэлро модернизация энергосистема smart grid" style="--accent:#f5a623">
+            <div class="card-header">
+                <span class="card-icon">⚡</span>
+                <div class="card-title">ГОЭЛРО-2.0</div>
+            </div>
+            <p class="card-desc">Программа модернизации энергосистемы РФ: снижение стоимости кВт·ч на 40% к 2035 году. Цифровые подстанции, Smart Grid, распределённая генерация.</p>
+            <div class="card-tags"><span class="tag">энергетика</span><span class="tag">Smart Grid</span><span class="tag">2035</span></div>
+            <a href="https://andrey777-ai.github.io/goelro2/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="energy" data-tags="чистый уголь clean coal нулевые выбросы экология" style="--accent:#f5a623">
+            <div class="card-header">
+                <span class="card-icon">🌱</span>
+                <div class="card-title">Clean Coal 2.0</div>
+            </div>
+            <p class="card-desc">Технология угольной генерации с нулевыми выбросами. ₽12 млрд/год с ТЭС 1 ГВт. Фильтры, дожиг, переработка золы в стройматериалы.</p>
+            <div class="card-tags"><span class="tag">экология</span><span class="tag">уголь</span><span class="tag">ноль выбросов</span></div>
+            <a href="https://andrey777-ai.github.io/clean-coal/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="energy" data-tags="шарообразный генератор energy sphere тороид кпд 95" style="--accent:#f5a623">
+            <div class="card-header">
+                <span class="card-icon">🌀</span>
+                <div class="card-title">Шарообразный генератор</div>
+            </div>
+            <p class="card-desc">Сферический энергогенератор с трёхлучевым тороидом. КПД 95.2%, 8 патентов. Для автономной энергетики, космоса и распределённых сетей.</p>
+            <div class="card-tags"><span class="tag">генератор</span><span class="tag">КПД 95%</span><span class="tag">патенты</span></div>
+            <a href="https://andrey777-ai.github.io/energy-sphere/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="energy" data-tags="гиперболоид усть цильма майнинг 1.05 мвт печора" style="--accent:#f5a623">
+            <div class="card-header">
+                <span class="card-icon">🏭</span>
+                <div class="card-title">Гиперболоидная установка, Усть-Цильма</div>
+            </div>
+            <p class="card-desc">Энерго-майнинговая установка 1.05 МВт. CAPEX $2.44 млн, ROI 6.7 лет. Использует северный климат для охлаждения оборудования.</p>
+            <div class="card-tags"><span class="tag">Усть-Цильма</span><span class="tag">майнинг</span><span class="tag">энергия</span></div>
+            <a href="https://andrey777-ai.github.io/hyperboloid-ustsilma/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="energy" data-tags="гром коловрат молния энергия smes плазма" style="--accent:#f5a623">
+            <div class="card-header">
+                <span class="card-icon">⛈️</span>
+                <div class="card-title">Гром-Коловрат 2.0</div>
+            </div>
+            <p class="card-desc">Система управляемого захвата энергии молнии. Плазменная пушка, SMES-накопитель, ИИ-прогноз с точностью >90%. Энергия удара 1 ГДж.</p>
+            <div class="card-tags"><span class="tag">молния</span><span class="tag">SMES</span><span class="tag">плазма</span></div>
+            <a href="https://andrey777-ai.github.io/grom-kolovrat/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <!-- ТРАНСПОРТ -->
+        <div class="card" data-cat="transport" data-tags="авиация мс-21 s-xx-3000 шасси сверхзвуковой" style="--accent:#50c878">
+            <div class="card-header">
+                <span class="card-icon">✈️</span>
+                <div class="card-title">Авиационный прорыв</div>
+            </div>
+            <p class="card-desc">МС-21-310 (импортозамещение), широкофюзеляжный S-XX-3000 (300 пассажиров), инновационное шасси с аэродинамической раскруткой колёс.</p>
+            <div class="card-tags"><span class="tag">авиация</span><span class="tag">МС-21</span><span class="tag">шасси</span></div>
+            <a href="https://andrey777-ai.github.io/aviation-breakthrough/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="transport" data-tags="двигателестроение alpha beta gamma автопром камaz volga" style="--accent:#50c878">
+            <div class="card-header">
+                <span class="card-icon">🚗</span>
+                <div class="card-title">Двигателестроение нового поколения</div>
+            </div>
+            <p class="card-desc">Семейства Alpha, Beta, Gamma. Турбокомпаунд, HCCI, водородные версии. Инвестиции 85 млрд руб, экспорт 400-500 тыс к 2030. Модернизация КАМАЗ и «Волга».</p>
+            <div class="card-tags"><span class="tag">двигатели</span><span class="tag">автопром</span><span class="tag">2035</span></div>
+            <a href="https://andrey777-ai.github.io/nextgen-engines/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="transport" data-tags="морские дизельные двигатели суда гражданские военные" style="--accent:#50c878">
+            <div class="card-header">
+                <span class="card-icon">⚓</span>
+                <div class="card-title">Морские дизельные двигатели</div>
+            </div>
+            <p class="card-desc">База данных и аналитика судовых дизелей. 4+ модели (Д-500, В-400). Мощность 1000–15000 кВт, КПД до 54%, стандарт IMO Tier III.</p>
+            <div class="card-tags"><span class="tag">судостроение</span><span class="tag">дизели</span><span class="tag">флот</span></div>
+            <a href="https://andrey777-ai.github.io/marine-engines/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="transport" data-tags="поезд гусеница биофотонный прозрачный владивосток хабаровск" style="--accent:#50c878">
+            <div class="card-header">
+                <span class="card-icon">🚆</span>
+                <div class="card-title">Поезд-гусеница</div>
+            </div>
+            <p class="card-desc">Транспорт из видения: прозрачный кузов, гофрированная структура, биофотонное освещение. Пилот Владивосток–Хабаровск (2027).</p>
+            <div class="card-tags"><span class="tag">поезд</span><span class="tag">биофотоника</span><span class="tag">Дальний Восток</span></div>
+            <a href="https://andrey777-ai.github.io/caterpillar-train/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="transport" data-tags="ледокол арктика 5 6 метров атомный ритм 400" style="--accent:#50c878">
+            <div class="card-header">
+                <span class="card-icon">🧊</span>
+                <div class="card-title">Ледокол нового поколения</div>
+            </div>
+            <p class="card-desc">Проламывает льды 5–6 метров за счёт двойного корпуса, двухслойной обшивки и активной терморегуляции. Реактор РИТМ-400.</p>
+            <div class="card-tags"><span class="tag">ледокол</span><span class="tag">Арктика</span><span class="tag">РИТМ-400</span></div>
+            <a href="https://andrey777-ai.github.io/icebreaker-nextgen/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="transport" data-tags="беспилотники дроны роботакси логистика маркировка грузов" style="--accent:#50c878">
+            <div class="card-header">
+                <span class="card-icon">🚁</span>
+                <div class="card-title">Беспилотные логистические системы</div>
+            </div>
+            <p class="card-desc">Дроны, роботакси, грузовые БП, ядерная логистика, умные КПП, маркировка грузов. Снижение издержек на 23%, безопасность +41%.</p>
+            <div class="card-tags"><span class="tag">дроны</span><span class="tag">роботакси</span><span class="tag">мультимодальность</span></div>
+            <a href="https://andrey777-ai.github.io/unmanned-logistics/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <!-- АПК -->
+        <div class="card" data-cat="agriculture" data-tags="сельское хозяйство продовольствие растениеводство животноводство теплицы" style="--accent:#7ee787">
+            <div class="card-header">
+                <span class="card-icon">🌾</span>
+                <div class="card-title">Сельское хозяйство</div>
+            </div>
+            <p class="card-desc">Продовольственная безопасность: точное земледелие, животноводство, тепличные комплексы, ИИ, дроны. Урожайность +25%, поголовье +15% к 2030.</p>
+            <div class="card-tags"><span class="tag">АПК</span><span class="tag">ИИ</span><span class="tag">дроны</span></div>
+            <a href="https://andrey777-ai.github.io/agriculture-food-security/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="agriculture" data-tags="рыбное хозяйство вылов переработка климат мониторинг" style="--accent:#7ee787">
+            <div class="card-header">
+                <span class="card-icon">🐟</span>
+                <div class="card-title">Развитие рыбного хозяйства РФ</div>
+            </div>
+            <p class="card-desc">Трансформация отрасли: вылов 5.8 млн т, переработка 45%, экспорт 11 млрд $. Климатический мониторинг, термические барьеры, адаптивные квоты.</p>
+            <div class="card-tags"><span class="tag">рыбхоз</span><span class="tag">климат</span><span class="tag">экспорт</span></div>
+            <a href="https://andrey777-ai.github.io/fisheries-development/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <!-- ГОРОДА -->
+        <div class="card" data-cat="cities" data-tags="умные города фрактальная архитектура нейро среда экология снег" style="--accent:#7b68ee">
+            <div class="card-header">
+                <span class="card-icon">🏙️</span>
+                <div class="card-title">Умные города</div>
+            </div>
+            <p class="card-desc">Фрактальная архитектура, нейро-адаптивная среда, экологический мониторинг, снежная логистика. Гармония ≥0.7, энергоэффективность −27%.</p>
+            <div class="card-tags"><span class="tag">города</span><span class="tag">нейро</span><span class="tag">снег</span></div>
+            <a href="https://andrey777-ai.github.io/smart-cities/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <!-- ОБРАЗОВАНИЕ -->
+        <div class="card" data-cat="education" data-tags="образование нейро адаптация фрактальные траектории дашборд" style="--accent:#ffc107">
+            <div class="card-header">
+                <span class="card-icon">🎓</span>
+                <div class="card-title">Образовательная экосистема</div>
+            </div>
+            <p class="card-desc">Нейро-адаптивные уроки, фрактальные траектории, дашборды учителя и администратора. Усвоение +47%, стресс −63%.</p>
+            <div class="card-tags"><span class="tag">образование</span><span class="tag">нейро</span><span class="tag">ИИ</span></div>
+            <a href="https://andrey777-ai.github.io/education-ecosystem/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <!-- ФИНАНСЫ -->
+        <div class="card" data-cat="finance" data-tags="инвестиции банковский советник риск менеджмент гав управление" style="--accent:#ffb86c">
+            <div class="card-header">
+                <span class="card-icon">📊</span>
+                <div class="card-title">Инвестиционное управление и банковский советник</div>
+            </div>
+            <p class="card-desc">Платформа для оценки проектов, сценарного моделирования, интеграции с ГАС, AI-банковский советник с порогами риска. Точность 96%.</p>
+            <div class="card-tags"><span class="tag">инвестиции</span><span class="tag">банки</span><span class="tag">ГЧП</span></div>
+            <a href="https://andrey777-ai.github.io/investment-banking-advisor/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="finance" data-tags="фин симфония накопления кешбэк жкх налоги" style="--accent:#ffb86c">
+            <div class="card-header">
+                <span class="card-icon">💰</span>
+                <div class="card-title">Фин_Симфония</div>
+            </div>
+            <p class="card-desc">Система гражданских накоплений: 0.2% кешбэк → ЖКХ / налоги. Капитализация ₽12 трлн к 2030. Интеграция с банками и Госуслугами.</p>
+            <div class="card-tags"><span class="tag">накопления</span><span class="tag">кешбэк</span><span class="tag">2030</span></div>
+            <a href="https://andrey777-ai.github.io/fin-symphony/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="finance" data-tags="пфр 2.0 токенизация пенсии офз длинные деньги" style="--accent:#ffb86c">
+            <div class="card-header">
+                <span class="card-icon">📈</span>
+                <div class="card-title">ПФР_2.0</div>
+            </div>
+            <p class="card-desc">Токенизация пенсий: ОФЗ + инфраструктура + AI-риск-контроль. Длинные деньги ₽15 трлн в экономике. Доходность выше инфляции на 3-5%.</p>
+            <div class="card-tags"><span class="tag">пенсии</span><span class="tag">токены</span><span class="tag">инфраструктура</span></div>
+            <a href="https://andrey777-ai.github.io/pfr2/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="finance" data-tags="никия регулятор маркетплейсы блокчейн есиа налог" style="--accent:#ffb86c">
+            <div class="card-header">
+                <span class="card-icon">🏛️</span>
+                <div class="card-title">НИКИЯ — регулятор маркетплейсов</div>
+            </div>
+            <p class="card-desc">Цифровая платформа сбора налогов с маркетплейсов: ЕСИА + блокчейн + 0.5% налог. ₽1.2 трлн/год в казну к 2030.</p>
+            <div class="card-tags"><span class="tag">маркетплейсы</span><span class="tag">налоги</span><span class="tag">блокчейн</span></div>
+            <a href="https://andrey777-ai.github.io/nikia/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <!-- НАУКА -->
+        <div class="card" data-cat="science" data-tags="чпу-7 станок risc-v эльбрус greactor сплавы метрология" style="--accent:#79c0ff">
+            <div class="card-header">
+                <span class="card-icon">⚙️</span>
+                <div class="card-title">Инженерно-технологический комплекс</div>
+            </div>
+            <p class="card-desc">ЧПУ-7 (7-осевой станок с RISC-V/Эльбрус), GReactor (10 000 g для синтеза сплавов), метрологическое ядро, нейроквантовый симулятор.</p>
+            <div class="card-tags"><span class="tag">ЧПУ-7</span><span class="tag">GReactor</span><span class="tag">машиностроение</span></div>
+            <a href="https://andrey777-ai.github.io/engineering-tech-complex/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="science" data-tags="квантовая микроскопия spdc кортикальная рибосома" style="--accent:#79c0ff">
+            <div class="card-header">
+                <span class="card-icon">🔬</span>
+                <div class="card-title">Квантово-кортикальная микроскопия</div>
+            </div>
+            <p class="card-desc">Сверхвысокое разрешение (<5 Å) через SPDC + кортикальную архитектуру V1→V2→V4→IT. Реконструкция за <1 сек, биоинтерпретируемость 0.87.</p>
+            <div class="card-tags"><span class="tag">микроскопия</span><span class="tag">SPDC</span><span class="tag">нейросети</span></div>
+            <a href="https://andrey777-ai.github.io/quantum-cortical-microscopy/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="science" data-tags="биомедицина регенерация нейроинтерфейсы гидрогели зубы" style="--accent:#79c0ff">
+            <div class="card-header">
+                <span class="card-icon">🧬</span>
+                <div class="card-title">Биомедицинская регенерация</div>
+            </div>
+            <p class="card-desc">Neo-Odontogenesis (зубная регенерация), графеновые нейронные кружева (1 Гбит/с), самовосстанавливающиеся гидрогели (заживление за 60 с).</p>
+            <div class="card-tags"><span class="tag">медицина</span><span class="tag">регенерация</span><span class="tag">нейро</span></div>
+            <a href="https://andrey777-ai.github.io/biomed-regeneration/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="science" data-tags="топологическая память rb ar черн хопф джонс" style="--accent:#79c0ff">
+            <div class="card-header">
+                <span class="card-icon">💾</span>
+                <div class="card-title">Топологическая память на Rb+Ar</div>
+            </div>
+            <p class="card-desc">Носитель с топологической защитой (числа Черна, Хопфа, Джонса). Плотность 10¹⁴ бит/см², хранение >10 лет без потерь.</p>
+            <div class="card-tags"><span class="tag">память</span><span class="tag">Rb+Ar</span><span class="tag">топология</span></div>
+            <a href="https://andrey777-ai.github.io/topological-memory/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="science" data-tags="гироид tpms решётка 3d печать структура" style="--accent:#79c0ff">
+            <div class="card-header">
+                <span class="card-icon">🧩</span>
+                <div class="card-title">Гироидная TPMS-решётка</div>
+            </div>
+            <p class="card-desc">Универсальная архитектурная структура с нулевой средней кривизной. Теплообменники, импланты, фильтры, лёгкие конструкции. 3D-печать SLM/SLS/DLP.</p>
+            <div class="card-tags"><span class="tag">TPMS</span><span class="tag">3D-печать</span><span class="tag">материалы</span></div>
+            <a href="https://andrey777-ai.github.io/gyroid-tpms/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <!-- ИТ и ИИ -->
+        <div class="card" data-cat="it-ai" data-tags="инженерный переводчик брокер данных интеграция промышленность" style="--accent:#7ee787">
+            <div class="card-header">
+                <span class="card-icon">🔌</span>
+                <div class="card-title">Инженерный переводчик</div>
+            </div>
+            <p class="card-desc">Универсальный брокер данных для интеграции промышленных систем (АСУ ТП, MES, ERP). Задержка <500 мс, 5000 событий/сек, интеграция <2 часов.</p>
+            <div class="card-tags"><span class="tag">интеграция</span><span class="tag">промышленность</span><span class="tag">ИИ</span></div>
+            <a href="https://andrey777-ai.github.io/engineer-broker/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="it-ai" data-tags="судебный ии арбитраж правосудие этический порог" style="--accent:#7ee787">
+            <div class="card-header">
+                <span class="card-icon">⚖️</span>
+                <div class="card-title">Судебный ИИ</div>
+            </div>
+            <p class="card-desc">Помощник для арбитражных судов. Обучен на реальных данных, этический порог 0.9. Сокращение времени подготовки решений на 30-50%.</p>
+            <div class="card-tags"><span class="tag">правосудие</span><span class="tag">ИИ</span><span class="tag">этика</span></div>
+            <a href="https://andrey777-ai.github.io/judicial-ai/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="it-ai" data-tags="крипто этический регулятор dao блокчейн этика" style="--accent:#7ee787">
+            <div class="card-header">
+                <span class="card-icon">🔐</span>
+                <div class="card-title">Крипто-Этический Регулятор 2.0</div>
+            </div>
+            <p class="card-desc">Гибридная модель регулирования криптовалют со встроенной этикой (НЕ НАВРЕДИ, ЭТИКА > КОД, ВЛАСТЬ ЧЕЛОВЕКА). Статус: латентный.</p>
+            <div class="card-tags"><span class="tag">крипто</span><span class="tag">этика</span><span class="tag">DAO</span></div>
+            <a href="https://andrey777-ai.github.io/crypto-ethical-regulator/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <!-- ЭКОЛОГИЯ -->
+        <div class="card" data-cat="ecology" data-tags="эко станция ихтиофауна рыба наблюдение неинвазивное" style="--accent:#7ee787">
+            <div class="card-header">
+                <span class="card-icon">🐠</span>
+                <div class="card-title">Эко-станция наблюдения за рыбой</div>
+            </div>
+            <p class="card-desc">Неинвазивное наблюдение за ихтиофауной с 11 сенсорами (гидрофон, 4K-камера, eDNA, ADCP). Бюджет $180k, окупаемость 0.72 года гранта.</p>
+            <div class="card-tags"><span class="tag">экология</span><span class="tag">ихтиология</span><span class="tag">ИИ</span></div>
+            <a href="https://andrey777-ai.github.io/hyperboloid-dredger/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <!-- БЕЗОПАСНОСТЬ -->
+        <div class="card" data-cat="security" data-tags="радиация защита спутники квантовые rb аргон" style="--accent:#ff7b72">
+            <div class="card-header">
+                <span class="card-icon">🛡️</span>
+                <div class="card-title">Космическо-квантовая радиационная защита</div>
+            </div>
+            <p class="card-desc">Гибридная защита квантовых спутников при 10 мК. Аттенуация дозы в 10-100 раз, масса <300 кг, тест на Rb-87.</p>
+            <div class="card-tags"><span class="tag">космос</span><span class="tag">радиация</span><span class="tag">кванты</span></div>
+            <a href="https://andrey777-ai.github.io/quantum-rad-shield/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+        <div class="card" data-cat="security" data-tags="совок контейнер литий аккумуляторы тушение вакуум" style="--accent:#ff7b72">
+            <div class="card-header">
+                <span class="card-icon">🔥</span>
+                <div class="card-title">Совок-герметичный контейнер</div>
+            </div>
+            <p class="card-desc">Портативное устройство для тушения горящих литий-ионных аккумуляторов. Полный цикл <30 сек, вес <2 кг, газ FK-5-1-12. Для авиации и офисов.</p>
+            <div class="card-tags"><span class="tag">пожарная безопасность</span><span class="tag">аккумуляторы</span><span class="tag">ESP32</span></div>
+            <a href="https://andrey777-ai.github.io/scoop-container/" class="card-link" target="_blank">Подробнее →</a>
+        </div>
+
+
+    </div>
+
+
+    <!-- ЕСЛИ НИЧЕГО НЕ НАЙДЕНО -->
+    <div class="empty" id="empty" style="display:none;">
+        <div class="empty-icon">🔍</div>
+        <p>Ничего не найдено. Попробуй другой запрос или категорию.</p>
+    </div>
+
+
+</div>
+
+
+<!-- ФУТЕР -->
+<div class="footer">
+    <div class="footer-line">
+        <strong>© 2026 Андрей Чупров</strong> · Портфолио разработок
+    </div>
+    <div class="footer-line">
+        <a href="https://orcid.org/0009-0006-6753-5001" target="_blank">ORCID</a>
+        <a href="https://github.com/Andrey777-ai" target="_blank">GitHub</a>
+        <a href="https://idea.росконгресс.рф" target="_blank">АСИ / Росконгресс</a>
+    </div>
+    <div class="footer-line" style="opacity:0.6;font-size:0.8rem;">
+        Все проекты разработаны как самостоятельные инженерно-исследовательские работы
+    </div>
+</div>
+
+
+<!-- СКРИПТ ФИЛЬТРАЦИИ -->
+<script>
+    const searchInput = document.getElementById('search');
+    const catButtons = document.querySelectorAll('.cat-btn');
+    const cards = document.querySelectorAll('.card');
+    const empty = document.getElementById('empty');
+    const totalCount = document.getElementById('total-count');
+
+
+    // Обновляем счётчик
+    totalCount.textContent = cards.length;
+
+
+    let activeCat = 'all';
+    let searchQuery = '';
+
+
+    function filterCards() {
+        let visibleCount = 0;
+        cards.forEach((card, idx) => {
+            const cat = card.dataset.cat;
+            const tags = (card.dataset.tags || '').toLowerCase();
+            const title = card.querySelector('.card-title').textContent.toLowerCase();
+            const desc = card.querySelector('.card-desc').textContent.toLowerCase();
+
+
+            const matchesCat = activeCat === 'all' || cat === activeCat;
+            const matchesSearch = searchQuery === '' ||
+                title.includes(searchQuery) ||
+                desc.includes(searchQuery) ||
+                tags.includes(searchQuery);
+
+
+            if (matchesCat && matchesSearch) {
+                card.style.display = 'flex';
+                card.style.animationDelay = (visibleCount * 0.03) + 's';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+
+        empty.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+
+    searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        filterCards();
+    });
+
+
+    catButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            catButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeCat = btn.dataset.cat;
+            filterCards();
+        });
+    });
+
+
+    // Первичная анимация
+    filterCards();
+</script>
+
+
+</body>
+</html>
